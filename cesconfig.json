@@ -35,5 +35,9 @@
     "platform": "win32",
     "arch": "x64",
     "kernelVersion": "10.0.22631"
+  },
+  "rules": {
+    "no-console": "off",
+    "no-unused-vars": "off"
   }
 }
