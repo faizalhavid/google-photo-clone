@@ -1,13 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
-import { Platform } from 'react-native';
+import React, { useState } from 'react';
+import { Button, Modal, View, Platform, StatusBar } from 'react-native';
+import { supabase } from '~/utils/supabase';
 
-import { ScreenContent } from '~/components/ScreenContent';
+export default function ModalComponent() {
+  const [modalVisible, setModalVisible] = useState(true);
 
-export default function Modal() {
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setModalVisible(false);
+  };
+
   return (
-    <>
-      <ScreenContent path="app/modal.tsx" title="Modal" />
-      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-    </>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => {
+        setModalVisible(false);
+      }}
+    >
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Button title='Sign Out' onPress={handleSignOut} />
+        <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
+      </View>
+    </Modal>
   );
 }
