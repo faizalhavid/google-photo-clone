@@ -4,6 +4,10 @@ import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { Text } from 'react-native';
 import { useMedia } from '~/providers/MediaProviders';
+import { getImagekitUrlFromPath } from 'utils/imageKit'
+import { useAuth } from '~/providers/AuthProvider';
+
+
 
 export default function AssetPage() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -12,6 +16,13 @@ export default function AssetPage() {
 
     if (!asset) {
         return <Text>Asset Not Found !</Text>
+    }
+    let uri: string;
+
+    if (asset.isLocalAsset) {
+        uri = asset.uri;
+    } else {
+        uri = getImagekitUrlFromPath(`${asset.path}`, []);
     }
 
     return (
@@ -22,7 +33,7 @@ export default function AssetPage() {
             }}
             />
             <Image
-                source={{ uri: asset.uri }}
+                source={{ uri }}
                 style={{ width: '100%', height: '100%' }}
                 contentFit="contain"
             />
