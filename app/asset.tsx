@@ -4,9 +4,10 @@ import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { Text } from 'react-native';
 import { useMedia } from '~/providers/MediaProviders';
+
 export default function AssetPage() {
     const { id } = useLocalSearchParams<{ id: string }>();
-    const { getAssetById } = useMedia();
+    const { getAssetById, syncToCloud } = useMedia();
     const asset = getAssetById(id);
 
     if (!asset) {
@@ -17,7 +18,7 @@ export default function AssetPage() {
         <>
             <Stack.Screen options={{
                 title: 'Photo',
-                headerRight: () => <AntDesign name="cloudupload" size={24} color="black" />
+                headerRight: () => <AntDesign onPress={() => syncToCloud(asset)} name="cloudupload" size={24} color="black" />
             }}
             />
             <Image
