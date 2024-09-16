@@ -6,6 +6,7 @@ import { Text } from 'react-native';
 import { useMedia } from '~/providers/MediaProviders';
 import { getImagekitUrlFromPath } from 'utils/imageKit'
 import { useAuth } from '~/providers/AuthProvider';
+import { ResizeMode, Video } from 'expo-av';
 
 
 
@@ -22,7 +23,7 @@ export default function AssetPage() {
     if (asset.isLocalAsset) {
         uri = asset.uri;
     } else {
-        uri = getImagekitUrlFromPath(`${asset.path}`, []);
+        uri = getImagekitUrlFromPath(asset.path, []);
     }
 
     return (
@@ -32,12 +33,20 @@ export default function AssetPage() {
                 headerRight: () => <AntDesign onPress={() => syncToCloud(asset)} name="cloudupload" size={24} color="black" />
             }}
             />
-            <Image
+            {asset.mediaType === 'photo' ? <Image
                 source={{ uri }}
                 style={{ width: '100%', height: '100%' }}
                 contentFit="contain"
-            />
-
+            /> :
+                <Video
+                    style={{ width: '100%', height: '100%' }}
+                    source={{ uri }}
+                    useNativeControls
+                    resizeMode={ResizeMode.CONTAIN}
+                    isLooping
+                // onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+                />
+            }
         </>
     );
 }

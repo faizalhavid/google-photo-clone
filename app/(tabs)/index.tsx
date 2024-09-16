@@ -9,7 +9,7 @@ import { getImagekitUrlFromPath } from '~/utils/imageKit';
 
 export default function Home() {
   const { assets, loadLocalAssets } = useMedia();
-
+  console.log(JSON.stringify(assets, null, 2))
   return (
     <>
       <Stack.Screen options={{ title: 'Photos' }} />

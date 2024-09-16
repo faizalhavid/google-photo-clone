@@ -33,7 +33,7 @@ export function MediaContextProvider({ children }: PropsWithChildren) {
 
     const assets = [
         ...remoteAssets,
-        ...localAssets.filter((assets => !assets.isBackedUp))
+        ...localAssets.filter((assets) => !assets.isBackedUp)
     ]
 
     const { user } = useAuth();
@@ -54,7 +54,6 @@ export function MediaContextProvider({ children }: PropsWithChildren) {
 
     const loadRemoteAssets = async () => {
         const { data, error } = await supabase.from('assets').select('*');
-        console.log(data, 'remote');
         setRemoteAssets(data)
     }
 
@@ -63,7 +62,10 @@ export function MediaContextProvider({ children }: PropsWithChildren) {
             return;
         }
         setLoading(true);
-        const assetsPage = await MediaLibrary.getAssetsAsync({ after: endCursor });
+        const assetsPage = await MediaLibrary.getAssetsAsync({
+            after: endCursor,
+            mediaType: [MediaLibrary.MediaType.photo, MediaLibrary.MediaType.video]
+        });
 
         const newAssets = await Promise.all(
 
@@ -73,6 +75,10 @@ export function MediaContextProvider({ children }: PropsWithChildren) {
                     .from('assets')
                     .select('*', { count: 'exact', head: true })
                     .eq('id', asset.id)
+                let uri = asset.uri;
+                if (asset.mediaType === 'video') {
+                    uri = (await MediaLibrary.getAssetInfoAsync(asset)).localUri ?? asset.uri;
+                }
                 return {
                     ...asset,
                     isBackedUp: !!count && count > 0,
@@ -81,7 +87,6 @@ export function MediaContextProvider({ children }: PropsWithChildren) {
             })
         );
 
-        console.log(JSON.stringify(newAssets, null, 2))
 
 
         setLocalAssets((existingItems) => [...existingItems, ...newAssets]);
